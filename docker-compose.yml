@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  cudapy_docker:  # The name of the service/container
+    build:
+      context: .  # Directory containing the Dockerfile
+      dockerfile: Dockerfile  # Name of the Dockerfile to build the image
+    devices:
+      - /dev/nvidia0:/dev/nvidia0  # Map GPU device for NVIDIA GPU usage
+    shm_size: '2gb'  # Allocate 2GB of shared memory for large operations (e.g., numpy)
+    ports:
+      - "8888:8888"  # Expose JupyterLab on port 8888
+    volumes:
+      - .:/workspace  # Mount the current directory to /workspace in the container
+    environment:
+      - TZ=Asia/Tokyo  # Set the container's timezone to Asia/Tokyo
+      - JUPYTER_ENABLE_LAB=yes  # Enable JupyterLab interface
+      - NVIDIA_VISIBLE_DEVICES=all  # Make all GPUs available to the container
+    tty: true  # Keep the container running interactively
+    runtime: nvidia  # Use NVIDIA runtime for GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia  # Specify the NVIDIA driver for GPU support
+              count: all  # Request all available GPUs
+              capabilities: [gpu]  # Grant GPU access to the container
+
