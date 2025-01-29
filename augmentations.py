@@ -52,12 +52,12 @@ class Albumentations:
         apply_snow = True
         if apply_snow:
             # Apply snow effect outside bounding boxes
-            snow_params = {"snow_point_lower": 0.5, "snow_point_upper": 0.5, "blend_alpha": 0.5}
+            snow_params = {"brightness_coeff": 3.3,"snow_point_lower": 0.2, "snow_point_upper": 0.25, "blend_alpha": 0.5}
             im = self.apply_snow_effect(im, labels, **snow_params)
         return im, labels
 
     @staticmethod
-    def apply_snow_effect(image, labels, snow_point_lower=0.2, snow_point_upper=0.5, blend_alpha=0.5):
+    def apply_snow_effect(image, labels, brightness_coeff=3.3,snow_point_lower=0.2, snow_point_upper=0.5, blend_alpha=0.5):
         """
         Apply a snow effect outside bounding boxes.
 
@@ -88,7 +88,7 @@ class Albumentations:
         cv2.imwrite('original.jpg', image)
 
         # Apply RandomSnow augmentation
-        snow_transform = A.RandomSnow(snow_point_lower=snow_point_lower, snow_point_upper=snow_point_upper, p=1.0)
+        snow_transform = A.RandomSnow(brightness_coeff=brightness_coeff,snow_point_lower=snow_point_lower, snow_point_upper=snow_point_upper, p=1.0)
         snow_effect_image = snow_transform(image=image)['image']
         # Assuming result_image is the output of the blending operation
         cv2.imwrite('snow_effect_image.jpg', snow_effect_image)
